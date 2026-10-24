@@ -1,36 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Mini Loja - Eletrodomésticos</title>
     <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
-    <div class="title">
+    <!-- Cabeçalho limpo -->
+    <header class="title">
         <h1>🛍️ Mini Loja</h1>
-    </div>
+    </header>
 
-    <div class="gridCompras" ></div>
-    <div class="caixaProdutos">
-        <div class="produto" >
-            <img src="assets/batedeira.jpeg" alt="batedeira">
+    <!-- Vitrine de Produtos (Grid Responsivo) -->
+    <main class="caixaProdutos">
+        <div class="produto">
+            <h3>Batedeira</h3>
+            <img src="assets/batedeira.jpeg" alt="Batedeira vermelha">
+            <h5>R$ 270,00</h5>
+        </div>
+        <div class="produto" onclick="info_Product()">
+            <h3>Airfryer</h3>
+            <img src="assets/airfrie.jpeg" alt="Airfryer preta">
+            <h5>R$ 500,00</h5>
         </div>
         <div class="produto">
-            <img src="assets/airfrie.jpeg" alt="airfrie">
+            <h3>Ferro de Passar</h3>
+            <img src="assets/ferrodepassar.jpeg" alt="Ferro de passar roupa">
+            <h5>R$ 80,00</h5>
         </div>
         <div class="produto">
-            <img src="assets/ferrodepassar.jpeg" alt="ferrodepassar">
+            <h3>Fogão de Mesa Cooktop</h3>
+            <img src="assets/fogaocooktop.jpeg" alt="Fogão cooktop">
+            <h5>R$ 800,00</h5>
         </div>
         <div class="produto">
-            <img src="assets/fogaocooktop.jpeg" alt="fogaocooktop">
+            <h3>Maquina Lava e Seca</h3>
+            <img src="assets/maquinadelavar.jpeg" alt="Máquina de lavar roupas">
+            <h5>R$ 2500,00</h5>
         </div>
         <div class="produto">
-            <img src="assets/maquinadelavar.jpeg" alt="maquinadelavar">
+            <h3>Micro-Ondas</h3>
+            <img src="assets/microondas.jpeg" alt="Micro-ondas">
+            <h5>R$ 600,00</h5>
         </div>
-        <div class="produto">
-            <img src="assets/microondas.jpeg" alt="microondas">
-        </div>
-    </div>
+    </main>
+    <script src="src/main.js"></script>
+    
 </body>
 </html>
