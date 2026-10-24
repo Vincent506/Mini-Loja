@@ -1,0 +1,31 @@
+.title{
+    display: grid;
+    flex-wrap: wrap;
+    border: none;
+    align-items: center;
+    width: 300px;
+    justify-content: center;
+    text-align: center;
+    border-radius: 10px ;
+    background-color: aqua;
+    gap: 8px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.caixaProdutos{
+    gap: 12px;
+    display: flex;
+    width: 1200px;
+    flex-wrap: wrap;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    border: 1px solid aqua;
+    border-radius: 12px;
+
+}
+
+.produtos{
+
+}
