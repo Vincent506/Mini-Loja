@@ -1,15 +1,29 @@
-// 1. Busca os produtos comprados no localStorage do navegador
 const produtosComprados = JSON.parse(localStorage.getItem('produtosComprados')) || [];
-
-// 2. Percorre todos os cards da página inicial
+const estoqueLocal = JSON.parse(localStorage.getItem('estoqueProdutos')) || {};
 const produtosNaTela = document.querySelectorAll(".produto");
 
 produtosNaTela.forEach((card) => {
     const idCard = card.getAttribute("data-id");
 
-    // Se o ID deste card estiver na lista de comprados, esconde ele da vitrine
+        
     if (produtosComprados.includes(idCard)) {
         card.style.display = 'none';
+        return;
+    }
+
+    const quantidadeAtual = estoqueLocal[idCard];
+
+    if (quantidadeAtual!==undefined && quantidadeAtual <=20) {
+        if (!card.querySelector('.aviso-estoque')) {
+            const aviso = document.createElement('div');
+            aviso.className = 'aviso-estoque';
+            aviso.style.color = '#d32f2f';
+            aviso.style.fontSize = '0.85rem';
+            aviso.style.fontWeight = 'bold';
+            aviso.style.marginTop = '6px';
+            aviso.textContent = `🔥 Ultimas ${quantidadeAtual} unidades! (33% OFF)`;
+            card.appendChild(aviso);
+        }
     }
 });
 

@@ -183,7 +183,6 @@ body {
     cursor: pointer;
 }
 
-/* Layout da Nota Fiscal dentro do Modal */
 .campo-opcao {
     display: flex;
     flex-direction: column;

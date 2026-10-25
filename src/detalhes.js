@@ -1,126 +1,156 @@
-const produtosDB = {
-    "batedeira": {
-        nome: "Batedeira",
-        preco: "R$ 270,00",
-        imagem: "../assets/batedeira.jpeg"
-    },
-    "airfryer": {
-        nome: "Airfryer",
-        preco: "R$ 500,00",
-        imagem: "../assets/airfrie.jpeg"
-    },
-    "ferro": {
-        nome: "Ferro de Passar",
-        preco: "R$ 80,00",
-        imagem: "../assets/ferrodepassar.jpeg"
-    },
-    "cooktop": {
-        nome: "Fogão de Mesa Cooktop",
-        preco: "R$ 800,00",
-        imagem: "../assets/fogaocooktop.jpeg"
-    },
-    "maquina": {
-        nome: "Máquina Lava e Seca",
-        preco: "R$ 2.500,00",
-        imagem: "../assets/maquinadelavar.jpeg"
-    },
-    "microondas": {
-        nome: "Micro-Ondas",
-        preco: "R$ 600,00",
-        imagem: "../assets/microondas.jpeg"
+let produtosDB = {};
+
+async function carregarBancoDeDados() {
+    try {
+        const resposta = await fetch('../src/produtos.json');
+        produtosDB = await resposta.json();
+        
+        
+        let estoqueLocal = JSON.parse(localStorage.getItem('estoqueProdutos'));
+        if (!estoqueLocal) {
+            estoqueLocal = {};
+            for (let key in produtosDB) {
+                estoqueLocal[key] = produtosDB[key].quantidade;
+            }
+            localStorage.setItem('estoqueProdutos', JSON.stringify(estoqueLocal));
+        }
+
+        iniciarLogicaDoProduto(estoqueLocal);
+
+    } catch (erro) {
+        console.error("Erro ao carregar o arquivo JSON:", erro);
     }
-};
+}
 
 
-const urlParams = new URLSearchParams(window.location.search);
-const idProduto = urlParams.get('id');
-console.log(idProduto);
+function iniciarLogicaDoProduto(estoqueLocal) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const idProduto = urlParams.get('id');
 
-const produtoEncontrado = produtosDB[idProduto];
+    const produtoEncontrado = produtosDB[idProduto];
+    const quantidadeDisponivel = estoqueLocal[idProduto];
 
+        
+    if (!produtoEncontrado || quantidadeDisponivel <= 0) {
+        document.getElementById('nomeProduto').textContent = "Produto Esgotado ou Indisponível";
+        document.querySelector('.btn-comprar').style.display = 'none';
+        return;
+    }
 
-if (produtoEncontrado) {
+    
     document.getElementById('nomeProduto').textContent = produtoEncontrado.nome;
     document.getElementById('precoProduto').textContent = produtoEncontrado.preco;
     document.getElementById('fotoProduto').src = produtoEncontrado.imagem;
     document.title = `${produtoEncontrado.nome} - Mini Loja`;
-} else {
-    document.getElementById('nomeProduto').textContent = "Produto não encontrado";
-}
-// ... (Mantenha no topo o seu objeto produtosDB e a captura do idProduto via URL)
 
-const btnComprar = document.querySelector('.btn-comprar');
-const modal = document.getElementById('modalCheckout');
-const btnFecharModal = document.getElementById('btnFecharModal');
-const btnConfirmarCompra = document.getElementById('btnConfirmarCompra');
+    
+    const inputQtd = document.getElementById('qtdItem');
+    inputQtd.max = quantidadeDisponivel; 
+    inputQtd.value = 1;
 
-const inputQtd = document.getElementById('qtdItem');
-const selectPagamento = document.getElementById('formaPagamento');
-
-// Helper para converter a string "R$ 270,00" para número (270.00)
-function extrairValorNumerico(precoString) {
-    if (!precoString) return 0;
-    // Remove "R$", espaços e troca ponto por nada e vírgula por ponto
-    const limpo = precoString.replace("R$", "").replace(".", "").replace(",", ".").trim();
-    return parseFloat(limpo) || 0;
+    configurarModal(idProduto, produtoEncontrado, estoqueLocal);
 }
 
-// Função responsável por recalcular os valores da Nota Fiscal
-function calcularNotaFiscal() {
-    if (!produtoEncontrado) return;
 
-    const valorUnitario = extrairValorNumerico(produtoEncontrado.preco);
-    const quantidade = parseInt(inputQtd.value) || 1;
-    const formaPagamento = selectPagamento.value;
+function configurarModal(idProduto, produtoEncontrado, estoqueLocal) {
+    const btnComprar = document.querySelector('.btn-comprar');
+    const modal = document.getElementById('modalCheckout');
+    const btnFecharModal = document.getElementById('btnFecharModal');
+    const btnConfirmarCompra = document.getElementById('btnConfirmarCompra');
+    const inputQtd = document.getElementById('qtdItem');
+    const selectPagamento = document.getElementById('formaPagamento');
 
-    let subtotal = valorUnitario * quantidade;
-    let desconto = 0;
-
-    // Aplica 5% de desconto se a opção escolhida for Pix
-    if (formaPagamento === 'pix') {
-        desconto = subtotal * 0.05;
+    function extrairValorNumerico(precoString) {
+        if (!precoString) return 0;
+        const limpo = precoString.replace("R$", "").replace(".", "").replace(",", ".").trim();
+        return parseFloat(limpo) || 0;
     }
 
-    const valorFinal = subtotal - desconto;
+    function calcularNotaFiscal() {
+        if (!produtoEncontrado) {
+            return;
+        }
+        let valorUnitario = extrairValorNumerico(produtoEncontrado.preco);
+        const quantidadeDesejada = parseInt(inputQtd.value) || 1;
+        let valorUnitarioFinal = valorUnitario;
+        let badgeDesconto = document.getElementById('avisoDescontoEstoque');
+        const estoqueMaximo = estoqueLocal[idProduto];
 
-    // Atualiza o HTML da Nota Fiscal
-    document.getElementById('nfNome').textContent = produtoEncontrado.nome;
-    document.getElementById('nfPrecoUnitario').textContent = produtoEncontrado.preco;
-    document.getElementById('nfQtd').textContent = quantidade;
+        if (!badgeDesconto) {
+            badgeDesconto = document.createElement('div');
+            badgeDesconto.id = 'avisoDescontoEstoque';
+            badgeDesconto.style.color = '#d32f2f';
+            badgeDesconto.style.fontWeight = 'bold';
+            badgeDesconto.style.fontSize = '0.85rem';
+            document.querySelector('.info-compra').prepend(badgeDesconto);
+        }
+        
+        if (quantidadeDesejada > estoqueMaximo) {
+            alert(`Quantidade máxima disponível em estoque: ${estoqueMaximo}`);
+            quantidadeDesejada = estoqueMaximo;
+            inputQtd.value = estoqueMaximo;
+        }
+
+        const formaPagamento = selectPagamento.value;
+        let subtotal = valorUnitario * quantidadeDesejada;
+        let desconto = 0;
+
+        if (formaPagamento === 'pix') {
+            desconto = subtotal * 0.05; 
+        } else if (estoqueAtual <= 20) {
+            desconto = valorUnitario * 0.33;
+            valorUnitario = valorUnitario - descontoEstoque;
+            badgeDesconto.textContent = `🔥 Preço promocional: 33% OFF (Restam apenas ${estoqueAtual} unidades!)`
+        } else{
+            badgeDesconto.textContent = '';
+        }
+
+        const valorFinal = subtotal - desconto;
+
+        
+        document.getElementById('nfNome').textContent = produtoEncontrado.nome;
+        document.getElementById('nfPrecoUnitario').textContent = produtoEncontrado.preco;
+        document.getElementById('nfQtd').textContent = quantidadeDesejada;
+        document.getElementById('nfDesconto').textContent = desconto > 0 
+            ? `- R$ ${desconto.toFixed(2).replace('.', ',')}` 
+            : 'R$ 0,00';
+        document.getElementById('nfTotal').textContent = `R$ ${valorFinal.toFixed(2).replace('.', ',')}`;
+    }
+
+    inputQtd.addEventListener('input', calcularNotaFiscal);
+    selectPagamento.addEventListener('change', calcularNotaFiscal);
+
+    btnComprar.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        calcularNotaFiscal();
+    });
+
+    btnFecharModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
     
-    document.getElementById('nfDesconto').textContent = desconto > 0 
-        ? `- R$ ${desconto.toFixed(2).replace('.', ',')}` 
-        : 'R$ 0,00';
+    btnConfirmarCompra.addEventListener('click', () => {
+        const quantidadeComprada = parseInt(inputQtd.value) || 1;
 
-    document.getElementById('nfTotal').textContent = `R$ ${valorFinal.toFixed(2).replace('.', ',')}`;
-}
+        
+        estoqueLocal[idProduto] -= quantidadeComprada;
 
-// Escuta mudanças na Quantidade e no Tipo de Pagamento para atualizar a nota em tempo real
-inputQtd.addEventListener('input', calcularNotaFiscal);
-selectPagamento.addEventListener('change', calcularNotaFiscal);
+        
+        let produtosComprados = JSON.parse(localStorage.getItem('produtosComprados')) || [];
+        if (estoqueLocal[idProduto] <= 0) {
+            if (!produtosComprados.includes(idProduto)) {
+                produtosComprados.push(idProduto);
+            }
+        }
 
-// 1. Abrir o modal e calcular a nota inicial
-btnComprar.addEventListener('click', () => {
-    modal.style.display = 'flex';
-    calcularNotaFiscal(); // Gera a nota no momento em que abre
-});
-
-// 2. Cancelar/Fechar o modal
-btnFecharModal.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
-
-// 3. Confirmar a Compra e remover da Home
-btnConfirmarCompra.addEventListener('click', () => {
-    let produtosComprados = JSON.parse(localStorage.getItem('produtosComprados')) || [];
-    
-    if (!produtosComprados.includes(idProduto)) {
-        produtosComprados.push(idProduto);
+        
+        localStorage.setItem('estoqueProdutos', JSON.stringify(estoqueLocal));
         localStorage.setItem('produtosComprados', JSON.stringify(produtosComprados));
-    }
 
-    alert('Compra realizada com sucesso! Nota fiscal gerada.');
-    
-    // Redireciona para a home
-    window.location.href = '../index.html';
-});
+        alert('Compra realizada com sucesso! Estoque atualizado.');
+        window.location.href = '../index.html';
+    });
+}
+
+carregarBancoDeDados();
