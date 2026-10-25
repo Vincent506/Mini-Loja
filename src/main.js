@@ -1,3 +1,5 @@
 function info_Product(){
-    return alert('Oláa');
-}
+    const produto = document.querySelectorAll(".produto");
+    console.log(produto);
+} 
+
