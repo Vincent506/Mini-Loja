@@ -31,6 +31,19 @@ body {
     text-align: center;
 }
 
+.btn-voltar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 300px;
+    margin: 20px auto;
+    padding: 10px;
+    color: wheat;
+    background-color: var(--color-primary);
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+}
 
 .caixaProdutos {
     display: grid;
@@ -43,6 +56,8 @@ body {
 
 
 .produto {
+    text-decoration: none;
+    color: inherit;
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -63,4 +78,157 @@ body {
     width: 100%;
     height: 160px;
     object-fit: contain; 
+}
+
+.container-detalhes {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    display: flex;
+    gap: 40px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+imagem-produto img {
+    max-width: 350px;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.info-compra {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.preco-destaque {
+    font-size: 1.8rem;
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.btn-comprar {
+    background-color: #25d366;
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-comprar:hover {
+    background-color: #1eb954;
+}
+
+.formas-pagamento {
+    background: #f5f5f5;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.modal-content input, 
+.modal-content select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.btn-confirmar {
+    background-color: #25d366;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-cancelar {
+    background-color: #e53935;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Layout da Nota Fiscal dentro do Modal */
+.campo-opcao {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.9rem;
+}
+
+.nota-fiscal {
+    background-color: #f8f9fa;
+    border: 1px dashed #cccccc;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 8px;
+    font-size: 0.88rem;
+}
+
+.nota-fiscal h3 {
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+.nota-fiscal hr {
+    border: 0;
+    border-top: 1px dashed #ddd;
+    margin: 8px 0;
+}
+
+.nota-fiscal p {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 0;
+}
+
+.nf-total {
+    font-size: 1.05rem;
+    color: #2e7d32;
+}
+
+.modal-acoes {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-acoes button {
+    flex: 1;
 }

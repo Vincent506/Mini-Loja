@@ -1,12 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Compra</title>
+    <link rel="stylesheet" href="../styles/style.css">
 </head>
 <body>
-    <h1>Olá
-    </h1>
+    <a class="btn-voltar" href="../index.html" style="margin: 20px; display: inline-block;">Voltar para a loja</a>
+    <main class="container-detalhes">
+        <div class="imagem-produto">
+            <img id="fotoProduto" src="" alt="Produto">
+        </div>
+
+        <div class="info-compra">
+            <h1 id="nomeProduto">Carregando...</h1>
+            <p class="preco-destaque" id="precoProduto">R$ 0,00</p>
+            
+            <div class="formas-pagamento">
+                <h3>💳 Formas de Pagamento</h3>
+                <ul>
+                    <li>Pix (5% de desconto)</li>
+                    <li>Cartão de Crédito em até 10x sem juros</li>
+                    <li>Boleto Bancário</li>
+                </ul>
+            </div>
+
+            <button class="btn-comprar">Comprar Agora</button>
+        </div>
+    </main>
+   <!-- Modal de Checkout (Com Nota Fiscal Simulado) -->
+    <div id="modalCheckout" class="modal">
+        <div class="modal-content">
+            <h2>🧾 Finalizar Compra</h2>
+        
+            <!-- Opções de Escolha -->
+            <div class="campo-opcao">
+                <label for="qtdItem">Quantidade:</label>
+                <input type="number" id="qtdItem" value="1" min="1" max="10">
+            </div>
+
+            <div class="campo-opcao">
+                <label for="formaPagamento">Forma de Pagamento:</label>
+                <select id="formaPagamento">
+                    <option value="pix">Pix (5% de Desconto)</option>
+                    <option value="cartao">Cartão de Crédito</option>
+                    <option value="boleto">Boleto Bancário</option>
+                </select>
+            </div>
+
+            <!-- Bloco de Nota Fiscal / Resumo do Pedido -->
+            <div class="nota-fiscal">
+                <h3>Resumo do Pedido</h3>
+                <hr>
+                <p><span>Produto:</span> <strong id="nfNome">-</strong></p>
+                <p><span>Preço Unitário:</span> <span id="nfPrecoUnitario">R$ 0,00</span></p>
+                <p><span>Quantidade:</span> <span id="nfQtd">1</span></p>
+                <p><span>Desconto/Taxa:</span> <span id="nfDesconto">R$ 0,00</span></p>
+                <hr>
+                <p class="nf-total"><span>Total a Pagar:</span> <strong id="nfTotal">R$ 0,00</strong></p>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="modal-acoes">
+                <button id="btnConfirmarCompra" class="btn-confirmar">Confirmar e Pagar</button>
+                <button id="btnFecharModal" class="btn-cancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <script src="../src/detalhes.js"></script>
 </body>
 </html>
