@@ -12,7 +12,7 @@
 ![Compra](/assets/fotosdosite/popupcompra.png)
 
 ## 💻 Sobre o Projeto
-
+Esse projeto veio como um desafio proposto pelo programa Trilhas. No qual consiste em criar um site simples de compras de produtos
 
 ## 🚀 Funcionalidades
 
