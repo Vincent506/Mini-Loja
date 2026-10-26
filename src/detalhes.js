@@ -42,7 +42,24 @@ function iniciarLogicaDoProduto(estoqueLocal) {
     document.getElementById('precoProduto').textContent = produtoEncontrado.preco;
     document.getElementById('fotoProduto').src = produtoEncontrado.imagem;
     document.title = `${produtoEncontrado.nome} - Mini Loja`;
+    
+    const elementoPreco = document.getElementById('precoProduto');
+    
+    if (quantidadeDisponivel <= 20) {
+        const precoLimpo = produtoEncontrado.preco.replace("R$", "").replace(".", "").replace(",", ".").trim();
+        const valorOriginal = parseFloat(precoLimpo) || 0;
+        const valorPromocional = valorOriginal - (valorOriginal * 0.33);
 
+        elementoPreco.innerHTML = `
+            <span style="text-decoration: line-through; color: #888; font-size: 0.9rem;">${produtoEncontrado.preco}</span><br>
+            <strong style="color: #2e7d32;">R$ ${valorPromocional.toFixed(2).replace('.', ',')}</strong>
+            <div style="color: #d32f2f; font-size: 0.85rem; font-weight: bold; margin-top: 4px;">
+                🔥 Últimas ${quantidadeDisponivel} unidades! (33% OFF)
+            </div>
+        `;
+    } else {
+        elementoPreco.textContent = produtoEncontrado.preco;
+    }
     
     const inputQtd = document.getElementById('qtdItem');
     inputQtd.max = quantidadeDisponivel; 
@@ -67,15 +84,14 @@ function configurarModal(idProduto, produtoEncontrado, estoqueLocal) {
     }
 
     function calcularNotaFiscal() {
-        if (!produtoEncontrado) {
-            return;
-        }
-        let valorUnitario = extrairValorNumerico(produtoEncontrado.preco);
-        const quantidadeDesejada = parseInt(inputQtd.value) || 1;
-        let valorUnitarioFinal = valorUnitario;
-        let badgeDesconto = document.getElementById('avisoDescontoEstoque');
-        const estoqueMaximo = estoqueLocal[idProduto];
+        if (!produtoEncontrado) return;
 
+        const valorUnitarioOriginal = extrairValorNumerico(produtoEncontrado.preco);
+        let quantidadeDesejada = parseInt(inputQtd.value) || 1;
+        const estoqueAtual = estoqueLocal[idProduto]; 
+        const formaPagamento = selectPagamento.value;
+
+        let badgeDesconto = document.getElementById('avisoDescontoEstoque');
         if (!badgeDesconto) {
             badgeDesconto = document.createElement('div');
             badgeDesconto.id = 'avisoDescontoEstoque';
@@ -85,35 +101,42 @@ function configurarModal(idProduto, produtoEncontrado, estoqueLocal) {
             document.querySelector('.info-compra').prepend(badgeDesconto);
         }
         
-        if (quantidadeDesejada > estoqueMaximo) {
-            alert(`Quantidade máxima disponível em estoque: ${estoqueMaximo}`);
-            quantidadeDesejada = estoqueMaximo;
-            inputQtd.value = estoqueMaximo;
+        
+        if (quantidadeDesejada > estoqueAtual) {
+            alert(`Quantidade máxima disponível em estoque: ${estoqueAtual}`);
+            quantidadeDesejada = estoqueAtual;
+            inputQtd.value = estoqueAtual;
         }
 
-        const formaPagamento = selectPagamento.value;
-        let subtotal = valorUnitario * quantidadeDesejada;
-        let desconto = 0;
+        let valorUnitarioFinal = valorUnitarioOriginal;
+        let valorDescontoTotal = 0;
+        let textoDescontoNota = "R$ 0,00";
 
-        if (formaPagamento === 'pix') {
-            desconto = subtotal * 0.05; 
-        } else if (estoqueAtual <= 20) {
-            desconto = valorUnitario * 0.33;
-            valorUnitario = valorUnitario - descontoEstoque;
-            badgeDesconto.textContent = `🔥 Preço promocional: 33% OFF (Restam apenas ${estoqueAtual} unidades!)`
-        } else{
+        
+        if (estoqueAtual <= 20) {
+            const descontoUnitario = valorUnitarioOriginal * 0.33;
+            valorUnitarioFinal = valorUnitarioOriginal - descontoUnitario;
+            valorDescontoTotal = descontoUnitario * quantidadeDesejada;
+            
+            badgeDesconto.textContent = `🔥 Preço promocional: 33% OFF (Restam apenas ${estoqueAtual} unidades!)`;
+            textoDescontoNota = `- R$ ${valorDescontoTotal.toFixed(2).replace('.', ',')} (33% OFF Estoque)`;
+        } else {
             badgeDesconto.textContent = '';
+            if (formaPagamento === 'pix') {
+                valorDescontoTotal = (valorUnitarioOriginal * quantidadeDesejada) * 0.05;
+                textoDescontoNota = `- R$ ${valorDescontoTotal.toFixed(2).replace('.', ',')} (Pix 5%)`;
+            }
         }
 
-        const valorFinal = subtotal - desconto;
+        const subtotal = valorUnitarioFinal * quantidadeDesejada;
+        
+        const valorFinal = estoqueAtual <= 20 ? subtotal : (subtotal - valorDescontoTotal);
 
         
         document.getElementById('nfNome').textContent = produtoEncontrado.nome;
-        document.getElementById('nfPrecoUnitario').textContent = produtoEncontrado.preco;
+        document.getElementById('nfPrecoUnitario').textContent = `R$ ${valorUnitarioFinal.toFixed(2).replace('.', ',')}`;
         document.getElementById('nfQtd').textContent = quantidadeDesejada;
-        document.getElementById('nfDesconto').textContent = desconto > 0 
-            ? `- R$ ${desconto.toFixed(2).replace('.', ',')}` 
-            : 'R$ 0,00';
+        document.getElementById('nfDesconto').textContent = textoDescontoNota;
         document.getElementById('nfTotal').textContent = `R$ ${valorFinal.toFixed(2).replace('.', ',')}`;
     }
 
