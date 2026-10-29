@@ -25,6 +25,22 @@ O projeto é composto por 2 páginas `index.html` e `produto.html`, a primeira p
 
 ## 🚀 Funcionalidades
 
+As principais funcionalidades desse projeto estão nos arquivos .js: `detalhes.js` e `main.js`. As funções do `main.js` são: 
+
+- `iniciarHome()`: /vou descrever mais futuramente
+
+- `produtosNaTela`: não é uma função, mas sim uma variavel que monitora se o usuario clicou em algum dos links que leva até a página de `produto.html`.
+
+As funções do arquivo `detalhes.js`:
+
+- `carregarBancoDeDados()`:
+
+- `iniciarLogicaDoProduto(estoqueLocal)`:
+
+- `configurarModal(idProduto, produtoEncontrado, estoqueLocal)`:
+
+- `carregarNotaFiscal`:
+
 
 ## 🛠️ Tecnologias Utilizadas
 
